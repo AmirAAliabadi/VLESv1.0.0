@@ -1,0 +1,28 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  3.0.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+Uref                 1.0;
+Zref                 0.1;
+zDir                 (0 0 1);
+flowDir              (1 0 0);
+z0                   0.0005;
+zGround              0.0;
+alpha                0.189;	//alpha = 1 / (ln(Zref/z0)) 
+a 		     1.55;	//a = Uref / (Zref^alpha)
+N 		     200;
+IuMax 		     1.0;	//Maximum turbulence intensity
+aSigma 		     0.2;	//Multiplier controlling energy-containing eddy or vortex size
+aTau		     0.01;	//Multiplier controlling energy-containing eddy or vortex life time
+flowVelocity         (0 0 0);
+turbulentKE0         1.3;
+alphat0              1e-05;
+Prt		     0.85;
+T0		     315.95;
+s0		     0;
+
+// ************************************************************************* //

@@ -1,0 +1,129 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1;
+
+x0		0;
+x1		5;
+y0		0;
+y1		1;
+z0		0;
+z1		0.001;	//Height of the first layers of cells adjecent to bottom
+z2		1;
+
+Nx	        100;
+Ny	        50;
+Nz	        49;
+NzGrading	20;
+
+// vertex numbering from left to right and from bottom to top, first front then back
+ 
+vertices
+(
+	($x0 $y0 $z0)
+	($x1 $y0 $z0)
+	($x0 $y0 $z1)
+	($x1 $y0 $z1)
+	($x0 $y0 $z2)
+	($x1 $y0 $z2)
+	($x0 $y1 $z0)
+	($x1 $y1 $z0)
+	($x0 $y1 $z1)
+	($x1 $y1 $z1)
+	($x0 $y1 $z2)
+	($x1 $y1 $z2)
+);
+
+blocks
+(
+   hex (0 1 7 6 2 3 9 8) ($Nx $Ny 1) simpleGrading (1 1 1)	//First layers of cells adjecent to bottom
+   hex (2 3 9 8 4 5 11 10) ($Nx $Ny $Nz) simpleGrading (1 1 $NzGrading)	//Upper domain
+);
+
+edges
+(
+);
+
+// boundary follow the vertex order per OpenFOAM user manual
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+		(0 2 8 6)
+		(2 4 10 8)
+        );
+    }
+
+    outlet
+    {
+	type	patch;	
+	faces
+        (
+		(7 9 3 1)
+		(9 11 5 3)
+        );
+    }
+
+    bottom
+    {
+	type	wall;	
+	faces
+        (
+		(1 0 6 7)
+        );
+    }
+
+    top
+    {
+        type wall;
+        faces
+        (
+		(5 11 10 4)
+        );
+    }
+
+    front
+    {
+        type cyclic;
+	neighbourPatch back;
+        faces
+        (
+		(1 3 2 0)
+		(3 5 4 2)
+        );
+    }
+
+    back
+    {
+        type cyclic;
+	neighbourPatch front;
+        faces
+        (
+		(6 8 9 7)
+		(8 10 11 9)
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+// ************************************************************************* //

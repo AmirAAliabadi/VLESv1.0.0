@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  3.0.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include        "ABLConditions"
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform $flowVelocity;
+
+boundaryField
+{
+    inlet
+    {
+	type powerLawTurbulentVelocity;
+	n $flowDir;	//Flow direction
+	y $zDir; 	//For 3D case y of inlet patch is wall-normal direction, i.e. z direction
+	a $a;		//U(z)=a * z ^ alpha
+	alpha $alpha;	//U(z)=a * z ^ alpha
+	zref $Zref; 	//Reference height in m (Average height in the matching range)
+	N $N; 		//Number of vortex points
+	IuMax $IuMax;	//Maximum turbulence intensity
+	aSigma $aSigma;	//Multiplier controlling energy-containing eddy or vortex size
+	value uniform $flowVelocity; // Dummy for paraFoam
+    }
+
+    outlet
+    {
+        type            zeroGradient;
+    }
+
+    bottom
+    {
+        type            uniformFixedValue;
+        value           uniform $flowVelocity;
+        uniformValue    constant $flowVelocity;
+    }
+
+    top
+    {
+        type 		zeroGradient;
+    }
+
+    front
+    {
+        type 		cyclic;
+	neighbourPatch 	back;
+    }
+
+    back
+    {
+        type 		cyclic;
+	neighbourPatch 	front;
+    }
+}
+
+
+// ************************************************************************* //
