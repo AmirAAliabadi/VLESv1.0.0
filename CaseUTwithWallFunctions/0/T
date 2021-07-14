@@ -1,0 +1,85 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include 	"ABLConditions"
+
+dimensions      [0 0 0 1 0 0 0];
+
+internalField   uniform $T0;
+
+boundaryField
+{
+
+    inlet
+    {
+        //Insert a power law similar to momentum with the same exponent alpha
+	//T(z) = b * z^alpha + Ts where b = (Tinf - Ts) / (Zmax ^ alpha)
+
+	type		codedFixedValue;
+	value		$internalField;
+	redirectType	inletBC;
+
+	code
+	#{
+		//Note: these constants should be written explicitly 
+		//At the moment we cannot pass them down from ABLConditions
+		scalar Tinf = 315.55;
+        	scalar Ts = 288.55;
+        	scalar Zmax = 1.2;
+        	scalar alpha = 0.192;
+
+		vector dir=vector(0,0,1);
+		scalarField var=patch().Cf()&dir;
+		scalarField value = ((Tinf - Ts) / pow(Zmax, alpha)) * pow(var, alpha) + Ts;
+
+		operator==(value);
+	#};           
+
+    }
+
+    outlet
+    {
+	type		inletOutlet;
+	inletValue	uniform $T0;
+	value		uniform $T0;
+    }
+    
+    bottom
+    {
+        type            fixedValue;
+        value           uniform $Ts;
+    }
+
+    top
+    {
+        type            zeroGradient;
+    }
+
+    front
+    {
+        type 		cyclic;
+	neighbourPatch 	back;
+    }
+
+    back
+    {
+        type 		cyclic;
+	neighbourPatch 	front;
+    }
+}
+
+// ************************************************************************* //

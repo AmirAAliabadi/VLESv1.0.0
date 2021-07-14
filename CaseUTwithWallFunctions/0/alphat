@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      alphat;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include 	"ABLConditions"
+
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet
+    {
+        type            fixedValue;
+        value           uniform $alphat0;
+    }
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform 0;
+        value           uniform 0;
+    }
+
+    bottom
+    {
+	// Implementation for wall function
+        type 		alphatJayatillekeWallFunction;
+	Prt			$Prt;
+	value		uniform 0;
+
+	// Implementation without wall function where yPlus ~ 1
+        // type            zeroGradient;
+    }
+
+    top
+    {
+        type 		zeroGradient;
+    }
+
+    front
+    {
+        type 		cyclic;
+	neighbourPatch 	back;
+    }
+
+    back
+    {
+        type 		cyclic;
+	neighbourPatch 	front;
+    }
+}
+
+
+// ************************************************************************* //
