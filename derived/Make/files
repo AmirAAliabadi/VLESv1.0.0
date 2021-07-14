@@ -1,0 +1,2 @@
+powerLawTurbulentVelocityFvPatchVectorField.C
+LIB = $(FOAM_USER_LIBBIN)/libmypowerLawTurbulent

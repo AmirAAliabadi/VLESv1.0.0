@@ -1,0 +1,2 @@
+powerLawVelocityFvPatchVectorField.C
+LIB = $(FOAM_USER_LIBBIN)/libmypowerLaw
