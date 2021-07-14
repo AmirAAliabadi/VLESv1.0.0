@@ -1,0 +1,5 @@
+Modified version of wallHeatFlux  based on suggestion of to change combustion flow to normal flows
+
+http://www.cfd-online.com/Forums/openfoam-post-processing/61345-how-check-heat-balance-heat-transfer-like-mass-balance-flow.html
+
+I replaced the createField with the boussinesqSimpleFoam
